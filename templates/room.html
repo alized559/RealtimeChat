@@ -6,8 +6,8 @@
     <title>Chat</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <style>
         .title-box {
@@ -22,6 +22,7 @@
         }
 
         .message {
+            margin-top: 10px;
             padding: 30px;
             background-color: #dcdcdc;
         }
@@ -40,23 +41,64 @@
 </head>
 <body>
     <div class="title-box text-center w-50">
-        <h2>Django Chat</h2>
+        <h2>{{room}} Chat</h2>
     </div>
 
-    <div class="chat-box w-50">
-        <div class="message">
-            <h5>username</h5>
-            <p>Hi guys...<br><span class="date">2022-2-1</span></p>
-        </div>
+    <div class="chat-box w-50" id="display">
     </div>
+
+    <script>
+        $(document).ready(function() {
+            setInterval(function() {
+                $.ajax({
+                    type: 'GET',
+                    url: "/getMessages/{{room}}/",
+                    success: function(response) {
+                        $("#display").empty();
+                        for (var key in response.messages) {
+                            var temp = "<div class='message'><h5>"+response.messages[key].user+"</h5><p>"+response.messages[key].value+"<br><span class='date'>"+response.messages[key].date+"</span></p></div>";
+                            $("#display").append(temp);
+                        }
+                    },
+                    error: function(response) {
+                        alert('An error occured')
+                    }
+                });
+            }, 1000);
+        })
+    </script>
 
     <div class="send-box w-50">
-        <form>
+        <form id="post-form">
+            {% csrf_token %}
+            <input type="hidden" name="username" id="username" value="{{username}}">
+            <input type="hidden" name="room_id" id="room_id" value="{{room_details.id}}">
             <div class="form-group">
-                <input class="form-control" type="text" name="message">
+                <input class="form-control" type="text" name="message" id="message">
             </div>
-            <button class="btn btn-info w-100" type="submit">Send</button>
+            <button class="btn btn-info w-100" type="submit" value="Send">Send</button>
         </form>
     </div>
 </body>
+
+<script type="text/javascript">
+    $(document).on('submit', '#post-form', function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: '/send',
+            data: {
+                username: $('#username').val(),
+                room_id: $('#room_id').val(),
+                message: $('#message').val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data) {
+                //alert(data)
+            }
+        });
+        document.getElementById('message').value = '' // blank after sending message
+    });
+</script>
 </html>

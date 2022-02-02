@@ -30,7 +30,8 @@
     </div>
 
     <div class="chat-box w-50">
-        <form>
+        <form action="checkview" method="POST">
+            {% csrf_token %}
             <div class="form-group">
                 <label for="name">Room Name</label>
                 <input class="form-control" type="text" name="name" id="name">

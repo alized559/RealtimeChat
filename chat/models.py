@@ -6,10 +6,13 @@ class Room(models.Model):
     name = models.CharField(max_length=100)
 
     class Meta:
-        db_table = 'room'
+        db_table = 'Room'
 
 class Message(models.Model):
-    value = models.CharField(max_length=1000000)
+    value = models.TextField(max_length=1000000)
     date = models.DateField(default=datetime.now, blank=True)
     user = models.CharField(max_length=100)
     room = models.CharField(max_length=100)
+
+    class Meta:
+        db_table = 'Message'
