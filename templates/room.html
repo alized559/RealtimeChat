@@ -21,14 +21,26 @@
             padding: 30px;
         }
 
-        .message {
+        .message, .message1 {
             margin-top: 10px;
             padding: 30px;
             background-color: #dcdcdc;
+            width: 45%;
+            border-radius: 10px;   
+        }
+
+        .message1 {
+            margin-left: auto;
+            background-color: #17a2b8;
+            color: white;
         }
 
         .date {
             color: grey;
+        }
+
+        .date1 {
+            color: #f1f1f1;
         }
 
         .send-box {
@@ -56,7 +68,11 @@
                     success: function(response) {
                         $("#display").empty();
                         for (var key in response.messages) {
-                            var temp = "<div class='message'><h5>"+response.messages[key].user+"</h5><p>"+response.messages[key].value+"<br><span class='date'>"+response.messages[key].date+"</span></p></div>";
+                            if (response.messages[key].user == document.getElementById('username').value) {
+                                var temp = "<div class='message1'><h5>"+response.messages[key].user+"</h5><p>"+response.messages[key].value+"<br><span class='date1'>"+response.messages[key].date+"</span></p></div>";
+                            } else {
+                                var temp = "<div class='message'><h5>"+response.messages[key].user+"</h5><p>"+response.messages[key].value+"<br><span class='date'>"+response.messages[key].date+"</span></p></div>";
+                            }
                             $("#display").append(temp);
                         }
                     },

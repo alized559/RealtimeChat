@@ -2,6 +2,14 @@
  
 This repository represents a realtime chat using django
 
+## Screenshots
+
+<div float="left">
+    <img src="./screenshots/home.png" width="500"/>
+    <img src="./screenshots/chat.png" width="500"/>
+    <img src="./screenshots/chat1.png" width="500"/>
+</div>
+
 ## Functions
 
 - Create a chat room
